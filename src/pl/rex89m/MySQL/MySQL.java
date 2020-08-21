@@ -5,20 +5,30 @@ import java.util.HashMap;
 
 public class MySQL {
 
-    int id;
+    private int id;
 
-    Connection connection;
+    private Connection connection;
 
-    String host;
+    private String host;
 
-    String pass;
+    private String pass;
 
-    int port;
+    private int port;
 
-    String user;
+    private String user;
+
+    private String DB;
 
     public int getId() {
         return id;
+    }
+
+    public String getDB() {
+        return DB;
+    }
+
+    public void setDB(String DB) {
+        this.DB = DB;
     }
 
     public void setId(int id) {
@@ -67,9 +77,20 @@ public class MySQL {
 
     static HashMap<Integer, MySQL> mySQLHashMap = new HashMap<>();
 
+    public MySQL(int id, String user, String host,String DB, String pass, int port){
+        this.host = host;
+        this.port = port;
+        this.pass = pass;
+        this.user = user;
+        this.DB = DB;
+        this.id = id;
+        if (!mySQLHashMap.containsKey(id)){
+            mySQLHashMap.put(id, this);
+        }
+    }
 
-    static public void MySQL(){
-
+    public static MySQL get(int id){
+        return mySQLHashMap.get(id);
     }
 
 }

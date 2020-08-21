@@ -1,0 +1,136 @@
+package pl.rex89m.MySQL;
+private final MineWars plugin;
+private String host = "vipserv.pl";
+private String user = "mokogl_rex";
+private String pss = "cXS92-y1";
+private String baza = "mokogl_rex";
+
+
+public MySQL(MineWars plugin) {
+        this.plugin = plugin;
+        mysquel();
+        }
+
+private Connection connection;
+
+public void mysquel() {
+        try {
+        Class.forName("com.mysql.jdbc.Driver");
+        connection = DriverManager.getConnection("jdbc:mysql://" + host + ":3306/" + baza, user, pss);
+        Bukkit.getServer().broadcastMessage(ChatColor.GREEN + "!!!");
+        } catch (ClassNotFoundException e) {
+        e.printStackTrace();
+        Bukkit.getServer().broadcastMessage(ChatColor.RED + "!!");
+        } catch (SQLException e) {
+        e.printStackTrace();
+        Bukkit.getServer().broadcastMessage(ChatColor.RED + "!!!");
+        }
+        }
+public String getPlayer_monety(Player p) {
+        String value = null;
+        PreparedStatement statement;
+        try {
+        statement = connection.prepareStatement("SELECT Monety FROM Info WHERE uuid='"+p.getUniqueId()+"'");
+        ResultSet result = statement.executeQuery();
+        while (result.next()) {
+        value = String.valueOf(result.getString("Monety"));
+        }
+        statement.close();
+        } catch (SQLException e) {
+        e.printStackTrace();
+        }
+        return value;
+        }
+public String getPlayer_xp(Player p) {
+        String value = null;
+        PreparedStatement statement;
+        try {
+        statement = connection.prepareStatement("SELECT xp_level FROM Info WHERE uuid='"+p.getUniqueId()+"'");
+        ResultSet result = statement.executeQuery();
+        while (result.next()) {
+        value = String.valueOf(result.getString("xp_level"));
+        }
+        statement.close();
+        } catch (SQLException e) {
+        e.printStackTrace();
+        }
+        return value;
+        }
+
+public Boolean isplayer_monety(Player p, int liczba) {
+        int value = 0;
+        PreparedStatement statement;
+        try {
+        statement = connection.prepareStatement("SELECT Monety FROM Info WHERE uuid = ?");
+        statement.setString(1, String.valueOf(p.getUniqueId()));
+        ResultSet result = statement.executeQuery();
+        while (result.next()) {
+        value = Integer.valueOf(result.getInt("Monety"));
+        }
+        statement.close();
+        } catch (SQLException e) {
+        e.printStackTrace();
+        }
+        boolean false_true = false;
+        if (value >= liczba) {
+        false_true = true;
+        }
+        return false_true;
+        }
+
+public Boolean is_klasa(Player p, String klasa) {
+        boolean value = false;
+        PreparedStatement statement;
+        try {
+        statement = connection.prepareStatement("SELECT "+klasa+" FROM Kity WHERE uuid = '"+p.getUniqueId()+"'");
+        ResultSet result = statement.executeQuery();
+        while (result.next()) {
+        value = result.getBoolean(klasa);
+        }
+        statement.close();
+        } catch (SQLException e) {
+        e.printStackTrace();
+        }
+        return value;
+        }
+
+public void changeMySQl(Player p, String klasa){
+        try {
+        PreparedStatement statement = connection.prepareStatement("UPDATE `Kity` SET `"+klasa+"` = 'true' WHERE (`uuid` = '"+p.getUniqueId()+"')");
+        statement.executeUpdate();
+        } catch (SQLException e) {
+        e.printStackTrace();
+        }
+        }
+
+public void player_remove_monety(Player p, int kasa){
+        int kasa_player = Integer.parseInt(getPlayer_monety(p));
+        int suma = kasa_player-kasa;
+        try {
+        PreparedStatement statement = connection.prepareStatement("UPDATE `Info` SET `Monety` = '"+suma+"' WHERE (`uuid` = '"+p.getUniqueId()+"')");
+        statement.executeUpdate();
+        } catch (SQLException e) {
+        e.printStackTrace();
+        }
+        }
+public void player_add_monety(Player p, int kasa){
+        int kasa_player = Integer.parseInt(getPlayer_monety(p));
+        int suma = kasa_player+kasa;
+        p.sendMessage(String.valueOf(suma));
+        try {
+        PreparedStatement statement = connection.prepareStatement("UPDATE `Info` SET `Monety` = '"+suma+"' WHERE (`uuid` = '"+p.getUniqueId()+"')");
+        statement.executeUpdate();
+        } catch (SQLException e) {
+        e.printStackTrace();
+        }
+        }
+public void player_add_xp(Player p, int kasa){
+        int kasa_player = Integer.parseInt(getPlayer_xp(p));
+        int suma = kasa_player+kasa;
+        try {
+        PreparedStatement statement = connection.prepareStatement("UPDATE `Info` SET `xp_level` = '"+suma+"' WHERE (`uuid` = '"+p.getUniqueId()+"')");
+        statement.executeUpdate();
+        } catch (SQLException e) {
+        e.printStackTrace();
+        }
+        }
