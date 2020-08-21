@@ -27,6 +27,10 @@ public class MySQLConnect{
         return value;
     }
 
+    public Connection getcon(){
+        return connectionHashMap.get(id);
+    }
+
     public static void connect(int id) {
         try {
             MySQL mySQL = MySQL.get(id);
